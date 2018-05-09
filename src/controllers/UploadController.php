@@ -74,6 +74,7 @@ class UploadController extends LfmController
                 //     ->save($new_file_path);
 
                 //new code to fix color change issue for srgb image
+                $storagePath = \Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().config('lfm.shared_folder_name','media').'/';
                 $image = new \Imagick($file->getRealPath());
                 $image->setImageColorSpace(\Imagick::COLORSPACE_SRGB);
                 $image->writeImage($storagePath.$new_filename);
