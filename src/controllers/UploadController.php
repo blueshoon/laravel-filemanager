@@ -63,6 +63,7 @@ class UploadController extends LfmController
     private function proceedSingleUpload($file)
     {
         $new_filename = $this->getNewName($file);
+        $original_file_path = parent::getCurrentPath('original/');
         $new_file_path = parent::getCurrentPath($new_filename);
 
         event(new ImageIsUploading($new_file_path));
@@ -84,6 +85,11 @@ class UploadController extends LfmController
                 if (parent::imageShouldHaveThumb($file)) {
                     $this->makeThumb($new_filename);
                 }
+
+                //save orginal file to the folder /original
+                $file->move(
+                    $original_file_path, $new_filename
+                );
             } else {
                 // Create (move) the file
                 File::move($file->getRealPath(), $new_file_path);
