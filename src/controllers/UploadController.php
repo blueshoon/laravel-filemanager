@@ -201,10 +201,11 @@ class UploadController extends LfmController
     private function makeThumb($new_filename)
     {
         // create thumb folder
-        $thumb_path = str_replace('media','media'."\\".date('Y')."\\".date('m')."\\".date('d'),parent::getThumbPath());
+        echo ' path '.$thumb_path = str_replace('media','media'."\\".date('Y')."\\".date('m')."\\".date('d'),parent::getThumbPath());
         parent::createFolderByPath($thumb_path);
 
         // create thumb image
+        echo ' current path '.parent::getCurrentPath(date('Y')."\\".date('m')."\\".date('d').'\\'.$new_filename);
         Image::make(parent::getCurrentPath(date('Y')."\\".date('m')."\\".date('d').'\\'.$new_filename))
             ->fit(config('lfm.thumb_img_width', 200), config('lfm.thumb_img_height', 200))
             ->save($thumb_path.'\\'.$new_filename);
