@@ -63,8 +63,16 @@ class UploadController extends LfmController
     private function proceedSingleUpload($file)
     {
         $new_filename = $this->getNewName($file);
-        $original_file_path = parent::getCurrentPath('original/');
-        $new_file_path = parent::getCurrentPath($new_filename);
+        $year = date('Y');
+        $month = date('m');
+        $date = date('d');
+        $original_file_path = parent::getCurrentPath($year.'/'.$month.'/'.$date.'/'.'original/');
+        $new_file_path = parent::getCurrentPath($year.'/'.$month.'/'.$date.'/'.$new_filename);
+        $file_path = parent::getCurrentPath($year.'/'.$month.'/'.$date);
+        if(!is_dir($file_path)){
+            mkdir($file_path, 0777, true);
+            chmod($file_path, 0777);
+        }
 
         event(new ImageIsUploading($new_file_path));
         try {
@@ -75,7 +83,7 @@ class UploadController extends LfmController
                 //     ->save($new_file_path);
 
                 //new code to fix color change issue for srgb image
-                $storagePath = \Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().config('lfm.shared_folder_name','media').'/';
+                $storagePath = \Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().config('lfm.shared_folder_name','media').'/'.$year.'/'.$month.'/'.$date.'/';
                 $image = new \Imagick($file->getRealPath());
                 $image->setImageColorSpace(\Imagick::COLORSPACE_SRGB);
                 $image->setImageCompressionQuality(70);
@@ -87,7 +95,7 @@ class UploadController extends LfmController
                     $this->makeThumb($new_filename);
                 }
 
-                //save orginal file to the folder /original
+                // //save orginal file to the folder /original
                 $file->move(
                     $original_file_path, $new_filename
                 );
@@ -193,12 +201,13 @@ class UploadController extends LfmController
     private function makeThumb($new_filename)
     {
         // create thumb folder
-        parent::createFolderByPath(parent::getThumbPath());
+        $thumb_path = str_replace('media','media'."\\".date('Y')."\\".date('m')."\\".date('d'),parent::getThumbPath());
+        parent::createFolderByPath($thumb_path);
 
         // create thumb image
-        Image::make(parent::getCurrentPath($new_filename))
+        Image::make(parent::getCurrentPath(date('Y')."\\".date('m')."\\".date('d').'\\'.$new_filename))
             ->fit(config('lfm.thumb_img_width', 200), config('lfm.thumb_img_height', 200))
-            ->save(parent::getThumbPath($new_filename));
+            ->save($thumb_path.'\\'.$new_filename);
     }
 
     private function useFile($new_filename)
