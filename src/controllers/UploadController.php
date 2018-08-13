@@ -207,7 +207,7 @@ class UploadController extends LfmController
         // create thumb image        
         Image::make(parent::getCurrentPath(date('Y')."/".date('m')."/".date('d').'/'.$new_filename))
             ->fit(config('lfm.thumb_img_width', 200), config('lfm.thumb_img_height', 200))
-            ->save($thumb_path.'\\'.$new_filename);
+            ->save($thumb_path.'/'.$new_filename);
     }
 
     private function useFile($new_filename)
