@@ -75,7 +75,7 @@ class UploadController extends LfmController
         }
 
         event(new ImageIsUploading($new_file_path));
-        // try {
+        try {
             if (parent::fileIsImage($file) && !in_array($file->getMimeType(), ['image/gif', 'image/svg+xml'])) {
                 // Handle image rotation
                 // Image::make($file->getRealPath())
@@ -106,17 +106,17 @@ class UploadController extends LfmController
             if (config('lfm.should_change_file_mode', true)) {
                 chmod($new_file_path, config('lfm.create_file_mode', 0644));
             }
-        // } catch (\Exception $e) {
-        //     array_push($this->errors, parent::error('invalid'));
+        } catch (\Exception $e) {
+            array_push($this->errors, parent::error('invalid'));
 
-        //     Log::error($e->getMessage(), [
-        //         'file' => $e->getFile(),
-        //         'line' => $e->getLine(),
-        //         'trace' => $e->getTraceAsString()
-        //     ]);
+            Log::error($e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
-        //     return false;
-        // }
+            return false;
+        }
 
         // TODO should be "FileWasUploaded"
         event(new ImageWasUploaded(realpath($new_file_path)));
@@ -201,7 +201,7 @@ class UploadController extends LfmController
     private function makeThumb($new_filename)
     {
         // create thumb folder
-        echo ' path '.$thumb_path = str_replace('media','media'."/".date('Y')."/".date('m')."/".date('d'),parent::getThumbPath());
+        $thumb_path = str_replace('media','media'."/".date('Y')."/".date('m')."/".date('d'),parent::getThumbPath());
         parent::createFolderByPath($thumb_path);
 
         // create thumb image        
