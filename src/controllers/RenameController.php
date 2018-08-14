@@ -62,7 +62,8 @@ class RenameController extends LfmController
 
         $old_file = parent::getCurrentPath($old_name);
         $extension = File::extension($old_file);
-        $new_file = parent::getCurrentPath(basename($new_name, ".$extension") . ".$extension");
+        $old_name = basename($old_name);
+        $new_file = str_replace($old_name,$new_name,$old_file);
 
         if (config('lfm.alphanumeric_filename') && preg_match('/[^\w-.]/i', $new_name)) {
             return parent::error('file-alnum');
